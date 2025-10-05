@@ -50,12 +50,15 @@ final class ViewManager {
         let card = {
             let card = UIView()
             let gradient = self.getGradient(colors: colors)
-            card.layer.addSublayer(gradient) //устанавливаем градиент на слой
+            //card.layer.addSublayer(gradient) //устанавливаем градиент на слой, тк у нас мы не знаем на коам слое будет находится фон, то мыз аменеим на.insertSublayer
+            card.layer.insertSublayer(gradient, at: 0) //тут мы точно знаем, что вставляем слой на 0 уровень
             card.clipsToBounds = true //все что выходит за пределы карточки  - обрезать - аналаг overflow:hidden
             card.layer.cornerRadius = 30
             card.translatesAutoresizingMaskIntoConstraints = false //Отключаем старое позиционирование чтобы управлять автолайаутом вручную
             card.widthAnchor.constraint(equalToConstant: 306).isActive = true // фикчируем размеры карточки через системы autolayout
             card.heightAnchor.constraint(equalToConstant: 175).isActive = true //
+            
+            card.tag = 7 //даем ему тэг, чтобы его можно было найти и поменять слой
             return card
         }()
         

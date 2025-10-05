@@ -16,11 +16,16 @@ final class ViewBuilder: NSObject {
     private var colorCollection: UICollectionView!
     private var imageCollection: UICollectionView!
     
-    var colors: [String] = [
+    var cardColors: [String] = [
         "#16A085FF", "#003F32FF"
     ]{
         willSet {
             //функционал при смене цвета - это момент переназначения свойства - начало переопределения переменной
+            if let colorView = view.viewWithTag(7){
+                colorView.layer.sublayers?.remove(at: 0)
+                let gradient = manager.getGradient(colors: newValue)
+                colorView.layer.insertSublayer(gradient, at: 0)
+            }
         }
     }
     var cardIcon: UIImage = .icon3{
@@ -59,7 +64,7 @@ final class ViewBuilder: NSObject {
     }
     
     func getCard(){
-        card = manager.getCard(colors: colors, balance: balance, cardNumber: cardNumber, cardImage: cardIcon)
+        card = manager.getCard(colors: cardColors, balance: balance, cardNumber: cardNumber, cardImage: cardIcon)
         print(cardIcon)
         view.addSubview(card)
         
@@ -124,6 +129,20 @@ extension ViewBuilder: UICollectionViewDataSource, UICollectionViewDelegate {
         return UICollectionViewCell()
     }
     
+    
+        
+        //функция переопределяет цвет карточки через делегат
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch collectionView.restorationIdentifier {
+        case RestoreIDs.colors.rawValue :
+            let colors = manager.colors[indexPath.item]
+            self.cardColors = colors
+        //case RestoreIDs.images.rawValue:
+            
+        default :
+           return
+        }
+    }
     
 }
 
